@@ -10,5 +10,8 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [svelte()]
+  integrations: [svelte()],
+  
+  base: '/',
+  site: 'https://deepsr2003.github.io'
 });
