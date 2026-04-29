@@ -1,0 +1,205 @@
+---
+import type { Project } from '../data/projects'
+interface Props { project: Project; index: number }
+const { project, index } = Astro.props
+const downloadHref = project.downloadUrl ?? `${project.githubUrl}/archive/refs/heads/main.zip`
+---
+
+<article
+  class="project-card group relative flex flex-col cursor-pointer"
+  data-index={index}
+  role="button"
+  tabindex="0"
+>
+  <div class="card-inner">
+
+    <!-- Top row: category + index -->
+    <div class="flex items-center justify-between mb-5">
+      <span class="mono-label">{project.category}</span>
+      <span class="mono-label">{String(index + 1).padStart(2, '0')}</span>
+    </div>
+
+    <!-- Metric — hero number -->
+    <div class="mb-5">
+      <div class="metric">{project.metric}</div>
+      <div class="metric-sub">{project.metricLabel}</div>
+    </div>
+
+    <!-- Rule -->
+    <div class="rule mb-4"></div>
+
+    <!-- Name + tagline -->
+    <h2 class="card-name mb-1">{project.name}</h2>
+    <p class="card-tagline flex-1 mb-5">{project.tagline}</p>
+
+    <!-- Stack pills -->
+    <div class="flex flex-wrap gap-1.5 mb-5">
+      {project.stack.slice(0, 4).map(t => (
+        <span class="pill">{t}</span>
+      ))}
+      {project.stack.length > 4 && (
+        <span class="pill">+{project.stack.length - 4}</span>
+      )}
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-2 mt-auto">
+      <a href={downloadHref} target="_blank" rel="noopener"
+         onclick="event.stopPropagation()"
+         class="btn-primary flex-1 flex items-center justify-center gap-1.5">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+      <a href={project.githubUrl} target="_blank" rel="noopener"
+         onclick="event.stopPropagation()"
+         class="btn-ghost flex items-center justify-center"
+         aria-label="GitHub">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+        </svg>
+      </a>
+      <button class="copy-btn btn-ghost flex items-center justify-center"
+              data-url={project.githubUrl}
+              onclick="event.stopPropagation()"
+              aria-label="Copy link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    border-radius: 18px;
+    overflow: hidden;
+    background: rgba(250, 247, 242, 0.03);
+    border: 1px solid rgba(250, 247, 242, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    /* Top shine line */
+    box-shadow: inset 0 1px 0 rgba(250, 247, 242, 0.07);
+  }
+
+  .project-card:hover {
+    border-color: rgba(249, 115, 22, 0.4);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(250, 247, 242, 0.07),
+      0 20px 40px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(249, 115, 22, 0.12);
+  }
+
+  .card-inner {
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+.mono-label {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #ea580c;
+  }
+
+  .metric {
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #faf7f2;
+    transition: color 0.2s ease;
+  }
+
+  /* Metric turns orange on hover — 10% accent moment */
+  .project-card:hover .metric {
+    color: #f97316;
+  }
+
+.metric-sub {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 11px;
+    color: rgba(250, 247, 242, 0.5);
+    margin-top: 6px;
+  }
+
+  .rule {
+    height: 1px;
+    background: rgba(250, 247, 242, 0.06);
+  }
+
+.card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(250, 247, 242, 0.9);
+    line-height: 1.4;
+  }
+
+.card-tagline {
+    font-size: 12px;
+    line-height: 1.65;
+    color: rgba(250, 247, 242, 0.45);
+  }
+
+  .pill {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: rgba(250, 247, 242, 0.04);
+    color: rgba(250, 247, 242, 0.28);
+    border: 1px solid rgba(250, 247, 242, 0.08);
+  }
+
+  /* Primary CTA — orange-deep bg, warm white text */
+  .btn-primary {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #ea580c;
+    color: #faf7f2;
+    border: 1px solid transparent;
+    transition: background 0.15s ease;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: #f97316; }
+
+  /* Ghost buttons */
+  .btn-ghost {
+    padding: 8px 11px;
+    border-radius: 10px;
+    border: 1px solid rgba(250, 247, 242, 0.1);
+    color: rgba(250, 247, 242, 0.3);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(250, 247, 242, 0.28);
+    color: rgba(250, 247, 242, 0.75);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation()
+      const url = (btn as HTMLElement).dataset.url ?? ''
+      await navigator.clipboard.writeText(url)
+      const orig = btn.innerHTML
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      setTimeout(() => { btn.innerHTML = orig }, 1500)
+    })
+  })
+</script>
