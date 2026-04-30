@@ -13,5 +13,5 @@ export default defineConfig({
   integrations: [svelte()],
   
   base: '/',
-  site: 'https://deepsr2003.github.io'
+  site: 'https://dsarkar10.github.io'
 });
